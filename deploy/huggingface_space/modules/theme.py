@@ -35,8 +35,39 @@ _BASE_CSS = f"""
     --sga-shadow: 0 6px 24px rgba(27, 37, 89, 0.07);
 }}
 
-html, body, [class*="st-"], .stApp, button, input, select, textarea {{
+/* Typography. Deliberately scoped to text containers instead of a broad
+   [class*="st-"] selector: Streamlit renders Material icons as <span> elements
+   whose class names also start with "st-", and forcing Inter on them made the
+   raw ligature text ("keyboard_arrow_down", "upload") paint over the labels. */
+html, body, .stApp, .stApp p, .stApp span:not([data-testid="stIconMaterial"]),
+.stApp label, .stApp li, .stApp div[data-testid="stMarkdownContainer"],
+.stApp button:not([data-testid="stBaseButton-headerNoPadding"]),
+.stApp input, .stApp select, .stApp textarea,
+[data-testid="stSidebar"] p, [data-testid="stSidebar"] label {{
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}}
+
+/* Icon glyphs must keep the Material Symbols font so ligatures resolve to a
+   single symbol instead of overlapping text. */
+[data-testid="stIconMaterial"],
+span[class*="material-symbols"],
+span.material-symbols-rounded,
+span.material-symbols-outlined,
+i.material-icons {{
+    font-family: 'Material Symbols Rounded' !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    font-feature-settings: 'liga' !important;
+    -webkit-font-feature-settings: 'liga' !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+    word-wrap: normal !important;
+    direction: ltr !important;
+    line-height: 1 !important;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
 }}
 
 .stApp {{ background: var(--sga-bg); }}
