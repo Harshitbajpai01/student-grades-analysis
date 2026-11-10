@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+reports/*.csv
+reports/*.pdf
+assets/charts/*.png
+sga_charts_*/
+sga_report_*/
+.streamlit/secrets.toml
+.env
+*.log

@@ -1,0 +1,34 @@
+# Streamlit configuration for Student Grades Analysis
+# Docs: https://docs.streamlit.io/develop/api-reference/configuration/config.toml
+#
+# These colours are mirrored in modules/config.py (PALETTE) so the native widgets
+# and the custom HTML / Plotly components share one visual language.
+
+[theme]
+base = "light"
+primaryColor = "#6954D9"
+backgroundColor = "#F7F5FC"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#17213D"
+font = "sans serif"
+
+[server]
+# Required for headless servers and for Streamlit Community Cloud.
+headless = true
+
+# Cloud containers do not reliably deliver filesystem watch events, so polling only
+# wastes CPU. Reruns come from the browser session, not from the file watcher.
+fileWatcherType = "none"
+
+# Matches MAX_UPLOAD_MB in modules/config.py; the app rejects larger files with a
+# readable message instead of reading them into memory.
+maxUploadSize = 25
+
+[browser]
+# No usage telemetry from the deployed app.
+gatherUsageStats = false
+
+[runner]
+# Magic commands on (the dashboard does not rely on them, but this keeps behaviour
+# identical to a local run).
+magicEnabled = true

@@ -1,0 +1,18 @@
+# Student Grades Analysis - Python dependencies
+# Tested on Python 3.11 (Streamlit Community Cloud: pick 3.11 or 3.12 in Advanced settings).
+# Install with:  pip install -r requirements.txt
+#
+# Every package below is imported by the project. Nothing else is required.
+
+streamlit==1.67.0      # dashboard framework (st.navigation, st.cache_data, segmented control)
+pandas==2.3.3          # data loading, cleaning, groupby aggregations
+numpy==2.4.6           # numeric helpers and NaN handling
+plotly==7.1.0          # interactive charts in the dashboard
+matplotlib==3.11.2     # static PNG chart renders (Agg backend) for downloads and the PDF
+seaborn==0.13.2        # statistical chart styling for the Matplotlib figures
+reportlab==5.1.0       # PDF report generation
+Pillow==12.3.0         # image sizing for charts embedded in the PDF
+
+# Excel engine. The dashboard exports CSV, PDF and PNG today; openpyxl keeps
+# pandas.DataFrame.to_excel available if you add .xlsx exports later.
+openpyxl==3.1.5
