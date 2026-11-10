@@ -1,0 +1,54 @@
+# ---------------- Python ----------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ---------------- Streamlit ----------------
+# Secrets must never be committed. Use the Community Cloud "Secrets" field instead.
+.streamlit/secrets.toml
+.streamlit/secrets.*.toml
+
+# ---------------- Local / generated output ----------------
+# Generated at runtime by the app and by run_analysis.py. The bundled inputs in
+# data/ ARE committed; only generated reports and caches are ignored.
+reports/*.csv
+reports/*.pdf
+reports/*.xlsx
+assets/charts/*.png
+*.log
+
+# Temporary folders created by the export/report flows
+sga_charts_*/
+sga_report_*/
+tmp/
+.cache/
+
+# ---------------- Environment and editor files ----------------
+.env
+.env.*
+!.env.example
+*.local
+
+# ---------------- OS clutter ----------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------------- Notebooks ----------------
+.ipynb_checkpoints/
+
+# ---------------- Archives kept locally ----------------
+student-grades-analysis.zip
+student_grades_charts.zip
