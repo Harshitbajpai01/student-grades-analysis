@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.git/
+.venv/
+venv/
+assets/screenshots/
+assets/charts/
+reports/
+deploy/
+tools/
+*.zip
+*.log
+.env
+.streamlit/secrets.toml

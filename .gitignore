@@ -52,3 +52,7 @@ desktop.ini
 # ---------------- Archives kept locally ----------------
 student-grades-analysis.zip
 student_grades_charts.zip
+.vercel
+
+# Vercel CLI local state
+.vercel/

@@ -130,6 +130,12 @@ student-grades-analysis/
 │   ├── screenshots/                # Captured screenshots of every page
 │   └── charts/                     # Generated chart PNGs (regenerable)
 ├── reports/                        # Generated CSVs and PDF (regenerable)
+├── deploy/
+│   └── huggingface_space/          # Self-contained copy packaged as a HF Space
+├── Dockerfile                      # Container route (Render, Railway, Koyeb, Fly.io)
+├── render.yaml                     # Render blueprint
+├── Procfile                        # Buildpack start command
+├── runtime.txt                     # Python version for buildpack hosts
 └── tools/
     └── make_demo_ethnicity.py      # Rebuilds the illustrative ethnicity sample
 ```
@@ -229,7 +235,60 @@ The app is live at `https://<your-subdomain>.streamlit.app/` once the log shows 
 
 ---
 
-## 8. Dashboard reference
+## 8. Deploying somewhere other than Streamlit Community Cloud
+
+The app is a plain Streamlit app, so any host that runs Python or a container works. Three ready-made routes are included; nothing in the code changes between them.
+
+### 8.1 Hugging Face Spaces (no GitHub account needed)
+
+Best option if you would rather not use GitHub. Free, and Streamlit is a first-class SDK there.
+
+1. Create an account at https://huggingface.co/join (email is enough).
+2. Go to https://huggingface.co/new-space, pick a name, select **Streamlit** as the SDK, choose the **Free** hardware, and create the Space.
+3. Open the **Files** tab, then drag the contents of `deploy/huggingface_space/` into the uploader (or drag the whole project folder once the Space exists). The `README.md` in that folder is the Space card that tells Hugging Face to run `app.py`.
+4. Commit the upload. The Space builds automatically and serves the dashboard on its public URL.
+
+`deploy/huggingface_space/` is a self-contained copy of the app (code, modules, datasets, `.streamlit/config.toml`, `requirements.txt`) prepared for exactly this. It has been booted and page-tested independently.
+
+If you would rather push from the command line:
+
+```bash
+pip install huggingface_hub
+huggingface-cli login            # paste an access token with write scope
+cd deploy/huggingface_space
+huggingface-cli upload <your-username>/<space-name> . --repo-type=space
+```
+
+### 8.2 Render, Railway, Koyeb or Fly.io (container or buildpack)
+
+`Dockerfile`, `render.yaml`, `Procfile` and `runtime.txt` are included.
+
+- **Render:** push the project to a repository, then **New → Blueprint** and select it (`render.yaml` sets the build and start commands). Free plan is enough. Streamlit must bind to the platform's `$PORT`, which the start command already does.
+- **Railway / Koyeb / Fly.io:** point them at the repository or the `Dockerfile`; the container exposes port 8501 and answers `/_stcore/health`.
+- **Any Docker host:** `docker build -t student-grades . && docker run -p 8501:8501 student-grades`
+
+### 8.3 Vercel (Container Runtime)
+
+Vercel now runs arbitrary containers on Fluid compute, so this Streamlit app deploys there unmodified through `Dockerfile.vercel` in the project root. Vercel's older serverless-only mode cannot host Streamlit, because the dashboard needs a long-lived HTTP server and a WebSocket stream; the container runtime is what makes it possible.
+
+1. Install the CLI: `npm i -g vercel`
+2. From the project folder: `vercel link` (creates or selects a project), then `vercel deploy --prod`
+3. Or import the repository in the Vercel dashboard; Vercel detects `Dockerfile.vercel` and selects the Container preset.
+
+`Dockerfile.vercel` starts Streamlit on the port Vercel provides (`$PORT`, default 80) and answers `/_stcore/health`. Idle instances scale to zero after five minutes and cold start on the next request, so the first visit after a quiet period takes a few seconds.
+
+### 8.4 What every host needs
+
+| Requirement | Where it comes from |
+| --- | --- |
+| Start command | `streamlit run app.py` (add `--server.port $PORT --server.address 0.0.0.0` on PaaS) |
+| Python version | 3.11 (see `runtime.txt`) |
+| Dependencies | `requirements.txt` |
+| Data | bundled in `data/`, no download at boot |
+| Theme | `.streamlit/config.toml` |
+| Writable paths | exports use temp directories, so a read-only or ephemeral filesystem is fine |
+
+## 9. Dashboard reference
 
 ### Performance bands (configurable in the sidebar)
 
@@ -276,7 +335,7 @@ Full narrative, tables and embedded charts: see [`REPORT.md`](REPORT.md) and `re
 
 ---
 
-## 9. Privacy and security
+## 10. Privacy and security
 
 * **No secrets in the repository.** `.gitignore` excludes `.streamlit/secrets.toml`, `.env` and any variant of them, plus caches and generated output.
 * **No credentials, API keys or personal data** are used anywhere in the project; the UCI dataset is public and contains no names or student identifiers.
@@ -286,7 +345,7 @@ Full narrative, tables and embedded charts: see [`REPORT.md`](REPORT.md) and `re
 
 ---
 
-## 10. Verification status
+## 11. Verification status
 
 Everything below was executed against this exact code before packaging.
 
@@ -309,7 +368,7 @@ Everything below was executed against this exact code before packaging.
 
 ---
 
-## 11. Troubleshooting
+## 12. Troubleshooting
 
 | Symptom | Cause and fix |
 |---------|---------------|
@@ -327,7 +386,7 @@ Everything below was executed against this exact code before packaging.
 
 ---
 
-## 12. Limitations
+## 13. Limitations
 
 * The dataset is observational and covers two Portuguese secondary schools; results describe this sample and are not causal.
 * Grades are on a 0-20 scale, so percentages are computed against 20 per period and 60 for the combined basis.
@@ -336,7 +395,7 @@ Everything below was executed against this exact code before packaging.
 
 ---
 
-## 13. Credits
+## 14. Credits
 
 * Dataset: P. Cortez and A. Silva, *Using Data Mining to Predict Secondary School Student Performance*, 2008 (UCI Machine Learning Repository).
 * Built with Streamlit, Plotly, Pandas, NumPy, Matplotlib, Seaborn and ReportLab.
